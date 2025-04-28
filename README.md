@@ -2,7 +2,7 @@
 
 Get notified on Telegram when IPO meets your criteria:
 
-- ✅ GMP ≥ 25%
+- ✅ GMP ≥ 10%
 - ✅ Closing Date is Today or Tomorrow
 
 ## 🚀 Setup Instructions
@@ -13,7 +13,7 @@ Get notified on Telegram when IPO meets your criteria:
    - `TELEGRAM_BOT_TOKEN`: From @BotFather
    - `TELEGRAM_CHAT_ID`: Use [this bot](https://t.me/userinfobot) to get your chat ID
 
-3. **Customize your alert logic in `ipo_alert_bot.py`**  
+3. **Customize your alert logic in `ipo_alert_bot_with_selenium.py`**  
    Change `MIN_GMP`, URL, etc. as needed
 
 4. **GitHub Actions will run it daily at 9 AM IST**
