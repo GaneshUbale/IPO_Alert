@@ -25,6 +25,7 @@ URL = "https://www.investorgain.com/report/ipo-subscription-live/333/ipo/"
 MIN_GMP = 10.0  # Minimum GMP %
 DATE_TODAY = datetime.today().date()
 DATE_TOMORROW = DATE_TODAY + timedelta(days=1)
+DATE_DayAfter = DATE_TODAY + timedelta(days=2)
 
 def send_telegram_message(msg):
     api_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -103,7 +104,7 @@ if __name__ == "__main__":
             date_str = re.sub(r'(st|nd|rd|th)', '', date_str)
             closing_date = datetime.strptime(date_str, "%d %b %Y").date()
 
-            if float(ipoRow['Status']) >= MIN_GMP and closing_date in [DATE_TODAY, DATE_TOMORROW]:
+            if float(ipoRow['Status']) >= MIN_GMP and closing_date in [DATE_TODAY, DATE_TOMORROW, DATE_DayAfter]:
                 count += 1
                 message += f"*{count} {ipoRow['IPO']}* \n🔹*GMP Percentile:* {ipoRow['Status']}% \n🔹*Closes on:* {ipoRow['Close Date']} "
                 if closing_date == DATE_TODAY:
