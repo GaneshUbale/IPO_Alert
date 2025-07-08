@@ -79,12 +79,13 @@ def fetch_ipo_data_with_selenium(url):
             rows = table.find_all('tr')
             for row in rows[1:]:  # Skip header
                 cols = row.find_all('td')
-                if len(cols) < 14:
+                if len(cols) < 13:
                     continue
-                ipo_name = cols[0].get_text(strip=True)
-                match = re.search(r'\(([-+]?\d+\.?\d*)%\)', cols[1].text)
+                firstCellText = cols[0].get_text(strip=True)
+                ipo_name = firstCellText.split('GMP:')[0]
+                match = re.search(r'\(([-+]?\d+\.?\d*)%\)', cols[0].text)
                 status = match.group(1) if match else "N/A"
-                close_date = cols[13].get_text(strip=True)
+                close_date = cols[12].get_text(strip=True)
                 ipo_data.append({
                     'IPO': ipo_name,
                     'Status': status,
@@ -100,6 +101,9 @@ if __name__ == "__main__":
     print("✅ Running IPO checker...")
     try:
         data = fetch_ipo_data_with_selenium(URL)
+        if len(data) == 0:
+            print(f" ⛔️ No IPO found (Open/Closed)")
+            send_telegram_message(f" ⛔️ No IPO found (Open/Closed), Need your immediate Attention! \n[Refer for more details]({URL})")
         message = f"🚀 **Upcoming IPO Alerts!**\n\n"
         count = 0
         gmps = ""
@@ -122,7 +126,7 @@ if __name__ == "__main__":
             send_telegram_message(message+ f"📢 *Don't miss out – apply before the deadlines!* \n[Refer for more details]({URL})")
         print(f"✅ Found {count} IPOs for your condition")
         if gmps != "":
-            print(f" ⛔️ There was few IPOs which don't have expected GMP and their gmps: {gmps}")
+            print(f" 🔘 There was few IPOs which don't have expected GMP and their gmps: {gmps}")
         print("✅ Check complete.")
     except Exception as e:
         print(f"❌ Error: {e}")
