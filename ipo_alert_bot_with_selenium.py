@@ -13,6 +13,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from dotenv import load_dotenv
+
+# Load from .env
+load_dotenv()
 
 # Read Telegram credentials from environment variables
 BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
