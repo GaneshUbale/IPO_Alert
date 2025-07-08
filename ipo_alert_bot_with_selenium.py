@@ -98,11 +98,13 @@ if __name__ == "__main__":
         data = fetch_ipo_data_with_selenium(URL)
         message = f"🚀 **Upcoming IPO Alerts!**\n\n"
         count = 0
+        gmps = ""
         for ipoRow in data:
             date_str = ipoRow['Close Date']
             date_str = re.sub(r'(st|nd|rd|th)', '', date_str)
             closing_date = datetime.strptime(date_str, "%d %b %Y").date()
-
+            if closing_date in [DATE_TODAY, DATE_TOMORROW]:
+                gmps += ipoRow['Status'] + ","
             if float(ipoRow['Status']) >= MIN_GMP and closing_date in [DATE_TODAY, DATE_TOMORROW]:
                 count += 1
                 message += f"*{count} {ipoRow['IPO']}* \n🔹*GMP Percentile:* {ipoRow['Status']}% \n🔹*Closes on:* {ipoRow['Close Date']} "
@@ -115,6 +117,8 @@ if __name__ == "__main__":
         if count > 0:
             send_telegram_message(message+ f"📢 *Don't miss out – apply before the deadlines!* \n[Refer for more details]({URL})")
         print(f"✅ Found {count} IPOs for your condition")
+        if gmps != "":
+            print(f" ⛔️ There was few IPOs which don't have expected GMP and their gmps: {gmps}")
         print("✅ Check complete.")
     except Exception as e:
         print(f"❌ Error: {e}")
