@@ -21,6 +21,7 @@ load_dotenv()
 # Read Telegram credentials from environment variables
 BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+CHANNEL_CHAT_ID = os.environ["TELEGRAM_CHANNEL_CHAT_ID"]
 
 # URL to check
 URL = "https://www.investorgain.com/report/ipo-subscription-live/333/ipo/"
@@ -30,10 +31,10 @@ MIN_GMP = 10.0  # Minimum GMP %
 DATE_TODAY = datetime.today().date()
 DATE_TOMORROW = DATE_TODAY + timedelta(days=1)
 
-def send_telegram_message(msg):
+def send_telegram_message(chat_Id, msg):
     api_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
-        "chat_id": CHAT_ID,
+        "chat_id": chat_Id,
         "text": msg,
         "parse_mode": "Markdown"
     }
@@ -103,7 +104,7 @@ if __name__ == "__main__":
         data = fetch_ipo_data_with_selenium(URL)
         if len(data) == 0:
             print(f" ⛔️ No IPO found (Open/Closed)")
-            send_telegram_message(f" ⛔️ No IPO found (Open/Closed), Need your immediate Attention! \n[Refer for more details]({URL})")
+            send_telegram_message(CHAT_ID, f" ⛔️ No IPO found (Open/Closed), Need your immediate Attention! \n[Refer for more details]({URL})")
         message = f"🚀 **Upcoming IPO Alerts!**\n\n"
         count = 0
         gmps = ""
@@ -123,7 +124,7 @@ if __name__ == "__main__":
                 message += "\n\n"
         #print(result)
         if count > 0:
-            send_telegram_message(message+ f"📢 *Don't miss out – apply before the deadlines!* \n[Refer for more details]({URL})")
+            send_telegram_message(CHANNEL_CHAT_ID, message+ f"📢 *Don't miss out – apply before the deadlines!* \n[Refer for more details]({URL})")
         print(f"✅ Found {count} IPOs for your condition")
         if gmps != "":
             print(f" 🔘 There was few IPOs which don't have expected GMP and their gmps: {gmps}")
