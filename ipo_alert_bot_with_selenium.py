@@ -112,6 +112,8 @@ if __name__ == "__main__":
             date_str = ipoRow['Close Date']
             date_str = re.sub(r'(st|nd|rd|th)', '', date_str)
             closing_date = datetime.strptime(date_str, "%d-%m-%Y").date()
+            if closing_date < DATE_TODAY:
+                break
             if closing_date in [DATE_TODAY, DATE_TOMORROW]:
                 gmps += ipoRow['Status'] + ","
             if float(ipoRow['Status']) >= MIN_GMP and closing_date in [DATE_TODAY, DATE_TOMORROW]:
