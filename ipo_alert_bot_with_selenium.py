@@ -111,7 +111,7 @@ if __name__ == "__main__":
         for ipoRow in data:
             date_str = ipoRow['Close Date']
             date_str = re.sub(r'(st|nd|rd|th)', '', date_str)
-            closing_date = datetime.strptime(date_str, "%d %b %Y").date()
+            closing_date = datetime.strptime(date_str, "%d-%m-%Y").date()
             if closing_date in [DATE_TODAY, DATE_TOMORROW]:
                 gmps += ipoRow['Status'] + ","
             if float(ipoRow['Status']) >= MIN_GMP and closing_date in [DATE_TODAY, DATE_TOMORROW]:
@@ -131,3 +131,4 @@ if __name__ == "__main__":
         print("✅ Check complete.")
     except Exception as e:
         print(f"❌ Error: {e}")
+        send_telegram_message(CHAT_ID, f" ❌ Error: {e}, Need your immediate Attention! \n[Refer for more details]({URL})")
