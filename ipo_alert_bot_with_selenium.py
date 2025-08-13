@@ -80,13 +80,13 @@ def fetch_ipo_data_with_selenium(url):
             rows = table.find_all('tr')
             for row in rows[1:]:  # Skip header
                 cols = row.find_all('td')
-                if len(cols) < 13:
+                if len(cols) < 10:
                     continue
                 firstCellText = cols[0].get_text(strip=True)
                 ipo_name = firstCellText.split('GMP:')[0]
                 match = re.search(r'\(([-+]?\d+\.?\d*)%\)', cols[0].text)
                 status = match.group(1) if match else "N/A"
-                close_date = cols[12].get_text(strip=True)
+                close_date = cols[9].get_text(strip=True)
                 ipo_data.append({
                     'IPO': ipo_name,
                     'Status': status,
