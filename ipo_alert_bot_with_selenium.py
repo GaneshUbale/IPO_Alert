@@ -83,17 +83,18 @@ def fetch_ipo_data_with_selenium(url):
                 # if len(cols) < 10:
                     # continue
                 #First Column
-                firstCellText = cols[0].get_text(strip=True)
-                ipo_name = firstCellText.split('GMP:')[0]
-                match = re.search(r'\(([-+]?\d+\.?\d*)%\)', cols[0].text)
-                status = match.group(1) if match else "N/A"
-                #Last Column
-                close_date = cols[-1].get_text(strip=True)
-                ipo_data.append({
-                    'IPO': ipo_name,
-                    'Status': status,
-                    'Close Date': close_date
-                })
+                if len(cols) != 0: # It assure each row have data ('td')
+                    firstCellText = cols[0].get_text(strip=True)
+                    ipo_name = firstCellText.split('GMP:')[0]
+                    match = re.search(r'\(([-+]?\d+\.?\d*)%\)', cols[0].text)
+                    status = match.group(1) if match else "N/A" # GMP
+                    #Last Column
+                    close_date = cols[-1].get_text(strip=True)
+                    ipo_data.append({
+                        'IPO': ipo_name,
+                        'Status': status,
+                        'Close Date': close_date
+                    })
 
     finally:
         driver.quit()
