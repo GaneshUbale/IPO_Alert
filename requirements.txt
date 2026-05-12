@@ -1,4 +1,4 @@
-requests
-beautifulsoup4
-selenium
-webdriver-manager
+beautifulsoup4==4.14.3
+requests==2.32.4
+selenium==4.27.1
+webdriver-manager==4.0.2

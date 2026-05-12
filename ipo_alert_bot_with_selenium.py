@@ -67,12 +67,12 @@ def fetch_ipo_data_with_selenium(url):
 
         # Wait until the table with ID 'report_table' appears (max 15 seconds)
         WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.ID, "report_table"))
+            EC.presence_of_element_located((By.ID, "reportTable"))
         )
 
         # Now parse page with BeautifulSoup
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        table = soup.find('table', {'id': 'report_table'})
+        table = soup.find('table', {'id': 'reportTable'})
         print("✅ IPO Table loaded.")
     
         ipo_data = []
