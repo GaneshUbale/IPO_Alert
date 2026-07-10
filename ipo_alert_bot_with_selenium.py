@@ -48,15 +48,30 @@ MIN_GMP = 10.0  # Minimum GMP %
 DATE_TODAY = datetime.today().date()
 DATE_TOMORROW = DATE_TODAY + timedelta(days=1)
 
-def send_telegram_message(chat_Id, msg):
+def send_telegram_message(chat_id: str, msg: str, parse_mode: str = "Markdown") -> None:
+    """Send a message via Telegram Bot API.
+
+    Args:
+        chat_id: Telegram chat id or channel id.
+        msg: Message text to send. Supports Markdown or HTML when
+            `parse_mode` is provided.
+        parse_mode: Optional parse mode (e.g. "Markdown", "HTML"). Set to
+            an empty string to disable parsing.
+
+    Raises:
+        requests.RequestException: If the HTTP request fails.
+    """
     api_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": chat_Id,
-        "text": msg,
-        "parse_mode": "Markdown"
-    }
-    response = requests.post(api_url, data=payload)
-    response.raise_for_status()
+    payload = {"chat_id": chat_id, "text": msg}
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
+
+    try:
+        response = requests.post(api_url, data=payload, timeout=10)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        print(f"❌ Failed to send Telegram message to {chat_id}: {exc}")
+        raise
 
 def fetch_ipo_data_with_selenium(url):    
     # Setup Chrome options
