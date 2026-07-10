@@ -1,3 +1,20 @@
+
+
+"""IPO alert bot using Selenium and Telegram notifications.
+Tech stack used in this script:
+- Python
+- Selenium for browser automation
+- requests for HTTP requests
+- BeautifulSoup for HTML parsing
+- Telegram Bot API for sending alerts
+
+This script scrapes IPO subscription data from
+https://www.investorgain.com/report/ipo-subscription-live/333/ipo/ using
+Selenium and BeautifulSoup. It extracts IPO names, GMP percentages, and
+closing dates, then sends alerts to Telegram when IPOs closing today or
+tomorrow meet a minimum GMP threshold.
+"""
+
 import os
 import requests
 from bs4 import BeautifulSoup
