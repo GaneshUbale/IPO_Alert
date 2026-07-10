@@ -1,3 +1,14 @@
+"""
+DEPRECATED:
+This script is no longer maintained and may not work correctly on dynamic websites.
+
+Tech stack used in this script:
+- Python
+- requests for HTTP requests
+- BeautifulSoup for HTML parsing
+- Telegram Bot API for sending alerts
+"""
+
 import os
 import requests
 from bs4 import BeautifulSoup
