@@ -41,12 +41,54 @@ CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 CHANNEL_CHAT_ID = os.environ["TELEGRAM_CHANNEL_CHAT_ID"]
 
 # URL to check
-URL = "https://www.investorgain.com/report/ipo-subscription-live/333/ipo/"
+URL = "https://www.investorgain.com/report/ipo-gmp-live/331/ipo/"
 
 # Set your alert condition
 MIN_GMP = 10.0  # Minimum GMP %
 DATE_TODAY = datetime.today().date()
 DATE_TOMORROW = DATE_TODAY + timedelta(days=1)
+
+
+def parse_close_date(date_str: str):
+    """Parse close dates from formats like '21-Jul', '16-Jul', or '21-07-2025'."""
+    normalized = re.sub(r"\b(st|nd|rd|th)\b", "", date_str.strip())
+    normalized = normalized.replace(" ", "")
+
+    yearful_formats = ["%d-%b-%Y", "%d-%B-%Y", "%d-%m-%Y"]
+    yearless_formats = ["%d-%b", "%d-%B", "%d-%m"]
+
+    for fmt in yearful_formats:
+        try:
+            return datetime.strptime(normalized, fmt).date()
+        except ValueError:
+            continue
+
+    for fmt in yearless_formats:
+        try:
+            parsed_date = datetime.strptime(normalized, fmt).date()
+            parsed_date = parsed_date.replace(year=DATE_TODAY.year)
+            return parsed_date
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported date format: {date_str}")
+
+
+def extract_gmp_percentage(cell_text: str) -> str:
+    """Extract the GMP percentage from a cell like '₹110 (25.94%) 80 ↓ / 117 ↑'."""
+    if not cell_text:
+        return "N/A"
+
+    match = re.search(r"\(([-+]?\d+(?:\.\d+)?)%\)", cell_text)
+    if match:
+        return match.group(1)
+
+    match = re.search(r"([-+]?\d+(?:\.\d+)?)%", cell_text)
+    if match:
+        return match.group(1)
+
+    return "N/A"
+
 
 def send_telegram_message(chat_id: str, msg: str, parse_mode: str = "Markdown") -> None:
     """Send a message via Telegram Bot API.
@@ -69,8 +111,9 @@ def send_telegram_message(chat_id: str, msg: str, parse_mode: str = "Markdown") 
     try:
         response = requests.post(api_url, data=payload, timeout=10)
         response.raise_for_status()
+        print(f"✅ Sent Telegram message to: {msg}")
     except requests.RequestException as exc:
-        print(f"❌ Failed to send Telegram message to {chat_id}: {exc}")
+        print(f"❌ Failed to send Telegram message: {exc}")
         raise
 
 def fetch_ipo_data_with_selenium(url):    
@@ -116,12 +159,11 @@ def fetch_ipo_data_with_selenium(url):
                     # continue
                 #First Column
                 if len(cols) != 0: # It assure each row have data ('td')
-                    firstCellText = cols[0].get_text(strip=True)
-                    ipo_name = firstCellText.split('GMP:')[0]
-                    match = re.search(r'\(([-+]?\d+\.?\d*)%\)', cols[0].text)
-                    status = match.group(1) if match else "N/A" # GMP
-                    #Last Column
-                    close_date = cols[-1].get_text(strip=True)
+                    firstCellText = cols[0].get_text(",", strip=True)
+                    ipo_name = firstCellText.split(',')[0]
+                    status = extract_gmp_percentage(cols[1].text)
+                    fifthCellTextFromlast = cols[-5].get_text(",", strip=True)
+                    close_date = fifthCellTextFromlast.split(',')[0]
                     ipo_data.append({
                         'IPO': ipo_name,
                         'Status': status,
@@ -145,8 +187,7 @@ if __name__ == "__main__":
         gmps = ""
         for ipoRow in data:
             date_str = ipoRow['Close Date']
-            date_str = re.sub(r'(st|nd|rd|th)', '', date_str)
-            closing_date = datetime.strptime(date_str, "%d-%m-%Y").date()
+            closing_date = parse_close_date(date_str)
             if closing_date < DATE_TODAY:
                 break
             if closing_date in [DATE_TODAY, DATE_TOMORROW]:
