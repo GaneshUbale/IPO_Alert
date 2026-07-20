@@ -67,7 +67,7 @@ def send_telegram_message(chat_id: str, msg: str, parse_mode: str = "Markdown") 
         payload["parse_mode"] = parse_mode
 
     try:
-        response = requests.post(api_url, data=payload, timeout=10)
+        response = requests.post(api_url, data=payload, timeout=10, allow_redirects=False)
         response.raise_for_status()
     except requests.RequestException as exc:
         print(f"❌ Failed to send Telegram message to {chat_id}: {exc}")
