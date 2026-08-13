@@ -12,7 +12,9 @@ Join the IPO alerts channel here:
 - Telegram link: [Ganesh's IPO Alert Channel](https://t.me/+elf_KdkTUnU0ODA9) 
 - OR Scan the QR code below to join:
 
-  ![Telegram Channel QR](./resources/telegram_qr_code.jpeg)
+  <div align="center">
+    <img src="./resources/telegram_qr_code.jpeg" alt="Telegram Channel QR" width="180" />
+  </div>
 
 ## 🚀 Setup Instructions
 
